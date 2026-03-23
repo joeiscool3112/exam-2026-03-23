@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import MovieForm from './components/MovieForm';
 import MovieList from './components/MovieList';
 import MovieDetails from './components/MovieDetails';
-
+import './App.css';
 function App() {
   const [moviename, setMoviename] = useState('');
   const [movies, setMovies] = useState([]);
