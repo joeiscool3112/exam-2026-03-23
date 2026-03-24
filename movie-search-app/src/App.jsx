@@ -25,6 +25,7 @@ function App() {
       setHasSearched(false);
       setTotalPages(0);
       setCurrentPage(1);
+      console.log("empty search or has been refreshed");
       return;
     }
 
@@ -43,6 +44,7 @@ function App() {
 
         if (data.Search && data.Search.length > 0) {
           addToRecent(moviename);
+          console.log("added to recent:", moviename);
         }
       } catch (err) {
         console.log(err);
@@ -56,12 +58,6 @@ function App() {
     fetchMovies();
   }, [moviename, currentPage]);
 
-  useEffect(() => { //lưu vào local storage
-    const saved = localStorage.getItem('recentMovieSearches');
-    if (saved) {
-      setRecentSearches(JSON.parse(saved));
-    }
-  }, []);
 
   useEffect(() => { // lưu recent searches vào localstorage mỗi khi thay đổi
     localStorage.setItem('recentMovieSearches', JSON.stringify(recentSearches));
@@ -74,6 +70,7 @@ function App() {
     setRecentSearches(prev => {
       const filtered = prev.filter(item => item.toLowerCase() !== searchTerm.toLowerCase());
       const updated = [searchTerm, ...filtered].slice(0, 8);
+      console.log("updated recent:", updated);
       return updated;
     });
   };
@@ -84,6 +81,7 @@ function App() {
     setMoviename(term);
     setCurrentPage(1);
     setMovieDetail(null);
+    console.log("clicked recent:", term);
   };
 
   const handleSelectMovie = async (id) => {
@@ -137,7 +135,15 @@ function App() {
   };
   return (
     <>
-      <MovieHomePage/>
+      <MovieHomePage 
+        setMoviename={setMoviename}
+        setInput={setInput}
+        setCurrentPage={setCurrentPage}
+        setMovies={setMovies}
+        setTotalPages={setTotalPages}
+        setHasSearched={setHasSearched}
+        setMovieDetail={setMovieDetail}
+      />
       <MovieForm 
       setMoviename={setMoviename} 
       moviename={moviename}
