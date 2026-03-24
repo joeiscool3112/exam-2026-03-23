@@ -5,6 +5,8 @@ import MovieDetails from './components/MovieDetails';
 import MovieHomePage from './components/MovieHomepage';
 import './App.css';
 import MoviePage from './components/MoviePage';
+import MovieRecent from './components/MovieRecent';
+
 function App() {
   const [moviename, setMoviename] = useState('');
   const [movies, setMovies] = useState([]);
@@ -15,39 +17,75 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [gotoPage, setGotoPage] = useState('');
+  const [recentSearches, setRecentSearches] = useState([]);
 
   useEffect(() => {
-  if (!moviename.trim()) {
-    setMovies([]);
-    setHasSearched(false);
-    setTotalPages(0);
-    setCurrentPage(1);
-    return;
-  }
-
-  async function fetchMovies() {
-    setLoading(true);
-    setHasSearched(true);
-
-    try {
-      const res = await fetch(
-        `https://www.omdbapi.com/?apikey=42f63d77&s=${encodeURIComponent(moviename)}&page=${currentPage}`
-      );
-      const data = await res.json();
-
-      setMovies(data.Search || []);
-      setTotalPages(Math.ceil(Number(data.totalResults || 0) / 10));
-    } catch (err) {
-      console.log(err);
+    if (!moviename.trim()) {
       setMovies([]);
+      setHasSearched(false);
       setTotalPages(0);
-    } finally {
-      setLoading(false);
+      setCurrentPage(1);
+      return;
     }
-  }
 
-  fetchMovies();
-}, [moviename, currentPage]);
+    async function fetchMovies() {
+      setLoading(true);
+      setHasSearched(true);
+
+      try {
+        const res = await fetch(
+          `https://www.omdbapi.com/?apikey=42f63d77&s=${encodeURIComponent(moviename)}&page=${currentPage}`
+        );
+        const data = await res.json();
+
+        setMovies(data.Search || []);
+        setTotalPages(Math.ceil(Number(data.totalResults || 0) / 10));
+
+        if (data.Search && data.Search.length > 0) {
+          addToRecent(moviename);
+        }
+      } catch (err) {
+        console.log(err);
+        setMovies([]);
+        setTotalPages(0);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchMovies();
+  }, [moviename, currentPage]);
+
+  useEffect(() => { //lưu vào local storage
+    const saved = localStorage.getItem('recentMovieSearches');
+    if (saved) {
+      setRecentSearches(JSON.parse(saved));
+    }
+  }, []);
+
+  useEffect(() => { // lưu recent searches vào localstorage mỗi khi thay đổi
+    localStorage.setItem('recentMovieSearches', JSON.stringify(recentSearches));
+  }, [recentSearches]);
+
+
+  const addToRecent = (searchTerm) => { //thêm search vào recent (giới hạn 8 cái, mới nhất lên đầu)
+    if (!searchTerm.trim()) return;
+
+    setRecentSearches(prev => {
+      const filtered = prev.filter(item => item.toLowerCase() !== searchTerm.toLowerCase());
+      const updated = [searchTerm, ...filtered].slice(0, 8);
+      return updated;
+    });
+  };
+
+
+  const handleRecentClick = (term) => {
+    setInput(term);
+    setMoviename(term);
+    setCurrentPage(1);
+    setMovieDetail(null);
+  };
+
   const handleSelectMovie = async (id) => {
     console.log('clicked:', id);
 
@@ -106,6 +144,14 @@ function App() {
       input={input}
       setInput={setInput}
       setCurrentPage={setCurrentPage}/>
+
+
+      <MovieRecent 
+      recentSearches={recentSearches}
+      handleRecentClick={handleRecentClick}/>
+
+    
+      
 
       {loading && <p style={{ textAlign: 'center' }}>Loading...</p>}
 
