@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import MovieForm from './components/MovieForm';
 import MovieList from './components/MovieList';
 import MovieDetails from './components/MovieDetails';
+import MovieHomePage from './components/MovieHomepage';
 import './App.css';
 function App() {
   const [moviename, setMoviename] = useState('');
@@ -65,7 +66,7 @@ function App() {
 
   return (
     <>
-      <h1>Movie Search</h1>
+      <MovieHomePage/>
       <MovieForm setMoviename={setMoviename} moviename={moviename}/>
 
       {loading && <p style={{ textAlign: 'center' }}>Loading...</p>}

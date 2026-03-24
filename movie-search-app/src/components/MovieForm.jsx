@@ -5,7 +5,6 @@ function MovieForm({ moviename, setMoviename }) {
 
   console.log('Search:', moviename);
   setMoviename(moviename);
-  setMoviename('');
 };
 
   return (
