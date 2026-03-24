@@ -20,6 +20,7 @@ function MovieHomePage({
   };
 
   return (
+    <>
     <h1 
       onClick={handleRefresh}
       style={{ 
@@ -31,6 +32,10 @@ function MovieHomePage({
     >
       Movie Search
     </h1>
+    <footer style={{ textAlign: 'center',marginBottom: '20px',color: '#888' }}>
+       Click 'Movie search' to go back to dashboard
+    </footer>
+    </>
   );
 }
 

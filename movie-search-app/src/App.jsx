@@ -131,6 +131,7 @@ function App() {
     }
 
     setCurrentPage(pageNumber);
+    console.log("going to page:", pageNumber);
     setGotoPage('');
   };
   return (
