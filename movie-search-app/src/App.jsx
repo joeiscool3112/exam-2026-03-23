@@ -66,7 +66,7 @@ function App() {
   return (
     <>
       <h1>Movie Search</h1>
-      <MovieForm onAddMoviename={setMoviename} />
+      <MovieForm setMoviename={setMoviename} moviename={moviename}/>
 
       {loading && <p style={{ textAlign: 'center' }}>Loading...</p>}
 

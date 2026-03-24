@@ -1,14 +1,10 @@
-import { useState } from 'react';
-
-function MovieForm({ onAddMoviename }) {
-  const [moviename, setMoviename] = useState('');
-
+function MovieForm({ moviename, setMoviename }) {
   const handleSubmit = (e) => {
   e.preventDefault();
   if (!moviename.trim()) return;
 
   console.log('Search:', moviename);
-  onAddMoviename(moviename);
+  setMoviename(moviename);
   setMoviename('');
 };
 
