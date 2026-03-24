@@ -10,6 +10,9 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [movieDetail, setMovieDetail] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const [input, setInput] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     if (!moviename.trim()) {
@@ -38,7 +41,6 @@ function App() {
 
     fetchMovies();
   }, [moviename]);
-
   const handleSelectMovie = async (id) => {
     console.log('clicked:', id);
 
@@ -67,7 +69,11 @@ function App() {
   return (
     <>
       <MovieHomePage/>
-      <MovieForm setMoviename={setMoviename} moviename={moviename}/>
+      <MovieForm 
+      setMoviename={setMoviename} 
+      moviename={moviename}
+      input={input}
+      setInput={setInput}/>
 
       {loading && <p style={{ textAlign: 'center' }}>Loading...</p>}
 
