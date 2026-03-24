@@ -1,4 +1,11 @@
-function MovieForm({ input, setInput, handleSubmit }) {
+function MovieForm({ setMoviename, input, setInput, setCurrentPage }) {
+  const handleSubmit = (e) => {
+  e.preventDefault();
+
+  console.log('Typed:', input);
+  setMoviename(input);
+  setCurrentPage(1);
+};
 
   return (
     <form onSubmit={handleSubmit}>
