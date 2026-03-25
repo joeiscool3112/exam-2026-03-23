@@ -18,13 +18,37 @@ function App() {
   const [totalPages, setTotalPages] = useState(0);
   const [gotoPage, setGotoPage] = useState('');
   const [recentSearches, setRecentSearches] = useState([]);
+  const params = new URLSearchParams(window.location.search);
 
-    useEffect(() => {
+
+  useEffect(() => {
+  const syncStateWithURL = () => {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q') || '';
+    const page = Number(params.get('page')) || 1;
+
+  console.log('URL q:', q);
+  console.log('URL page raw:', params.get('page'));
+  console.log('URL page parsed:', page);
+
+    setInput(q);
+    setMoviename(q);
+    setCurrentPage(page);
+  };
+
+  syncStateWithURL();
+
+  window.addEventListener('popstate', syncStateWithURL);
+
+  return () => window.removeEventListener('popstate', syncStateWithURL);
+}, []);
+
+  useEffect(() => {
     if (!moviename.trim()) {
       setMovies([]);
       setHasSearched(false);
       setTotalPages(0);
-      setCurrentPage(1);
+      // setCurrentPage(1);
       console.log("empty search or has been refreshed");
       return;
     }
@@ -42,7 +66,7 @@ function App() {
         setMovies(data.Search || []);
         setTotalPages(Math.ceil(Number(data.totalResults || 0) / 10));
         console.log("moviesname: ", moviename);
-       
+
       } catch (err) {
         console.log(err);
         setMovies([]);
@@ -55,7 +79,7 @@ function App() {
     fetchMovies();
   }, [moviename, currentPage]);
 
-  
+
 
   useEffect(() => { // lấy recent searches từ localstorage khi app load
     const stored = JSON.parse(localStorage.getItem('recentMovieSearches'));
@@ -68,7 +92,7 @@ function App() {
       localStorage.setItem('recentMovieSearches', JSON.stringify(fixed));
     }
   }, []);
-  
+
   const addToRecent = (searchTerm) => { //thêm search vào recent (giới hạn 8 cái, mới nhất lên đầu)
     if (!searchTerm.trim()) return;
     setRecentSearches(prev => {
@@ -79,19 +103,15 @@ function App() {
     });
   };
 
-
-
-  
-
-
-
-
   const handleRecentClick = (term) => {
     setInput(term);
     setMoviename(term);
     setCurrentPage(1);
     setMovieDetail(null);
     console.log("clicked recent:", term);
+    params.set('q', `${term}`);
+    params.set('page', '1');
+    window.history.pushState({}, '', `?${params.toString()}`);
   };
 
   const handleSelectMovie = async (id) => {
@@ -120,7 +140,7 @@ function App() {
   };
 
 
-   const handleGoToPage = (e) => {
+  const handleGoToPage = (e) => {
     e.preventDefault();
 
     if (!gotoPage.trim()) {
@@ -141,12 +161,15 @@ function App() {
     }
 
     setCurrentPage(pageNumber);
+    const params = new URLSearchParams(window.location.search);
+    params.set('page', String(pageNumber));
+    window.history.pushState({}, '', `?${params.toString()}`);
     console.log("going to page:", pageNumber);
     setGotoPage('');
   };
   return (
     <>
-      <MovieHomePage 
+      <MovieHomePage
         setMoviename={setMoviename}
         setInput={setInput}
         setCurrentPage={setCurrentPage}
@@ -155,25 +178,25 @@ function App() {
         setHasSearched={setHasSearched}
         setMovieDetail={setMovieDetail}
       />
-      <MovieForm 
-      setMoviename={setMoviename} 
-      moviename={moviename}
-      input={input}
-      setInput={setInput}
-      setCurrentPage={setCurrentPage}
-      recentSearches={recentSearches}
-      addToRecent={addToRecent}
+      <MovieForm
+        setMoviename={setMoviename}
+        moviename={moviename}
+        input={input}
+        setInput={setInput}
+        setCurrentPage={setCurrentPage}
+        recentSearches={recentSearches}
+        addToRecent={addToRecent}
+        params={params}
+        currentPage={currentPage}
       />
 
 
-      <MovieRecent 
-      recentSearches={recentSearches}
-      handleRecentClick={handleRecentClick}
-      hasSearched={hasSearched}
+      <MovieRecent
+        recentSearches={recentSearches}
+        handleRecentClick={handleRecentClick}
+        hasSearched={hasSearched}
       />
 
-    
-      
 
       {loading && <p style={{ textAlign: 'center' }}>Loading...</p>}
 
@@ -193,8 +216,9 @@ function App() {
         gotoPage={gotoPage}
         setGotoPage={setGotoPage}
         handleGoToPage={handleGoToPage}
-      />  
-      
+        params={params}
+      />
+
       <MovieDetails
         movie={movieDetail}
         onClose={() => setMovieDetail(null)}

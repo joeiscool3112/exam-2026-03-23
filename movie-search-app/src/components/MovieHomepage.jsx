@@ -1,13 +1,14 @@
-function MovieHomePage({ 
-  setMoviename, 
-  setInput, 
-  setCurrentPage, 
-  setMovies, 
-  setTotalPages, 
+function MovieHomePage({
+  setMoviename,
+  setInput,
+  setCurrentPage,
+  setMovies,
+  setTotalPages,
   setHasSearched,
-  setMovieDetail 
+  setMovieDetail,
+  params
 }) {
-  
+
   const handleRefresh = () => {
     setInput('');
     setMoviename('');
@@ -17,24 +18,26 @@ function MovieHomePage({
     setHasSearched(false);
     setMovieDetail(null);
     console.log("refreshed");
+    window.history.pushState({}, '', '/');
   };
+
 
   return (
     <>
-    <h1 
-      onClick={handleRefresh}
-      style={{ 
-        cursor: 'pointer', 
-        textAlign: 'center',
-        margin: '30px 0 20px 0',
-        userSelect: 'none'
-      }}
-    >
-      Movie Search
-    </h1>
-    <footer style={{ textAlign: 'center',marginBottom: '20px',color: '#888' }}>
-       Click 'Movie search' to go back to dashboard
-    </footer>
+      <h1
+        onClick={handleRefresh}
+        style={{
+          cursor: 'pointer',
+          textAlign: 'center',
+          margin: '30px 0 20px 0',
+          userSelect: 'none'
+        }}
+      >
+        Movie Search
+      </h1>
+      <footer style={{ textAlign: 'center', marginBottom: '20px', color: '#888' }}>
+        Click 'Movie search' to go back to dashboard
+      </footer>
     </>
   );
 }

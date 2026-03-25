@@ -1,22 +1,22 @@
 function MovieRecent({ recentSearches, handleRecentClick, hasSearched }) {
-    if (hasSearched) return null;
-    return (
-        <>
-        {recentSearches.length > 0 && (
+  if (hasSearched) return null;
+  return (
+    <>
+      {recentSearches.length > 0 && (
         <div style={{
           margin: '40px auto',
           maxWidth: '900px',
           padding: '0 20px',
         }}>
-          <h3 style={{ 
-            color: '#e0e0e0', 
+          <h3 style={{
+            color: '#e0e0e0',
             marginBottom: '16px',
             textAlign: 'center',
             fontSize: '1.4rem'
           }}>
             Recent Searches
           </h3>
-          
+
           <div style={{
             display: 'flex',
             flexWrap: 'wrap',
@@ -56,8 +56,8 @@ function MovieRecent({ recentSearches, handleRecentClick, hasSearched }) {
           </div>
         </div>
       )}
-        </>
-    )
+    </>
+  )
 }
 
 export default MovieRecent;

@@ -1,16 +1,45 @@
-function MovieForm({ setMoviename, input, setInput, setCurrentPage, addToRecent }) {
-  const handleSubmit = (e) => {
-  e.preventDefault();
-  console.log('Typed:', input);
-  setMoviename(input);
-  setCurrentPage(1);
-  console.log("saving recent searches:", input);
-  addToRecent(input);
-  const stored = JSON.parse(localStorage.getItem('recentMovieSearches')) || [];
-  const updated = [...stored, input];
-  localStorage.setItem('recentMovieSearches', JSON.stringify(updated));
+import { useEffect } from 'react';
 
-};
+function MovieForm({
+  setMoviename,
+  input,
+  setInput,
+  setCurrentPage,
+  addToRecent,
+  params,
+
+}) {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    console.log('Typed:', input);
+    setMoviename(input);
+    setCurrentPage(1);
+
+    params.set('q', input);
+    params.set('page', '1');
+    window.history.pushState({}, '', `?${params.toString()}`);
+
+    console.log('saving recent searches:', input);
+    addToRecent(input);
+
+    const stored = JSON.parse(localStorage.getItem('recentMovieSearches')) || [];
+    const updated = [...stored, input];
+    localStorage.setItem('recentMovieSearches', JSON.stringify(updated));
+  };
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setMoviename(input);
+      setCurrentPage(1);
+
+      params.set('q', input);
+      params.set('page', '1');
+      window.history.pushState({}, '', `?${params.toString()}`);
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, [input, setMoviename, setCurrentPage, params]);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -19,7 +48,6 @@ function MovieForm({ setMoviename, input, setInput, setCurrentPage, addToRecent 
         value={input}
         onChange={(e) => {
           setInput(e.target.value);
-          setMoviename(e.target.value);
         }}
         placeholder="Search movie name..."
       />

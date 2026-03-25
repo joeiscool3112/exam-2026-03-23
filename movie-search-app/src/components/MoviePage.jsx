@@ -1,10 +1,11 @@
-function MoviePage({ 
-  currentPage, 
-  setCurrentPage, 
-  totalPages, 
-  gotoPage, 
-  setGotoPage, 
-  handleGoToPage 
+function MoviePage({
+  currentPage,
+  setCurrentPage,
+  totalPages,
+  gotoPage,
+  setGotoPage,
+  handleGoToPage,
+  params
 }) {
 
   if (totalPages <= 1) return null;
@@ -16,7 +17,7 @@ function MoviePage({
       padding: '0 15px',
       textAlign: 'center'
     }}>
-      
+
       {/* Prev - Page - Next */}
       <div style={{
         display: 'flex',
@@ -27,7 +28,14 @@ function MoviePage({
         marginBottom: '16px'
       }}>
         <button
-          onClick={() => setCurrentPage(currentPage - 1)}
+          onClick={() => {
+            const newPage = currentPage - 1;
+            setCurrentPage(newPage);
+
+            const params = new URLSearchParams(window.location.search);
+            params.set('page', String(newPage));
+            window.history.pushState({}, '', `?${params.toString()}`);
+          }}
           disabled={currentPage === 1}
           style={{
             padding: '12px 24px',
@@ -53,7 +61,13 @@ function MoviePage({
         </span>
 
         <button
-          onClick={() => setCurrentPage(currentPage + 1)}
+          onClick={() => {
+            const newPage = currentPage + 1;
+            setCurrentPage(newPage);
+            const params = new URLSearchParams(window.location.search);
+            params.set('page', String(newPage));
+            window.history.pushState({}, '', `?${params.toString()}`);
+          }}
           disabled={currentPage === totalPages}
           style={{
             padding: '12px 24px',
@@ -71,13 +85,16 @@ function MoviePage({
       </div>
 
       {/* Go to Page - Responsive */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '10px',
-        flexWrap: 'wrap'
-      }}>
+      <form
+        onSubmit={handleGoToPage}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '10px',
+          flexWrap: 'wrap'
+        }}
+      >
         <input
           type="number"
           min="1"
@@ -96,9 +113,8 @@ function MoviePage({
             textAlign: 'center'
           }}
         />
-        <button 
-          type="button"
-          onClick={handleGoToPage}
+        <button
+          type="submit"
           style={{
             padding: '12px 28px',
             fontSize: '16px',
@@ -112,7 +128,7 @@ function MoviePage({
         >
           Go
         </button>
-      </div>
+      </form>
     </div>
   );
 }
