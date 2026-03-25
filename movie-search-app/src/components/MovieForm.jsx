@@ -29,18 +29,21 @@ function MovieForm({
   };
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setMoviename(input);
-      setCurrentPage(1);
+  if (!input.trim()) return;
 
-      params.set('q', input);
-      params.set('page', '1');
-      window.history.pushState({}, '', `?${params.toString()}`);
-    }, 1000);
+  const timeout = setTimeout(() => {
+    console.log('search:', input);
 
-    return () => clearTimeout(timeout);
-  }, [input, setMoviename, setCurrentPage, params]);
+    setMoviename(input);
+    setCurrentPage(1);
 
+    params.set('q', input);
+    params.set('page', '1');
+    window.history.pushState({}, '', `?${params.toString()}`);
+  }, 1000);
+
+  return () => clearTimeout(timeout);
+}, [input]);
   return (
     <form onSubmit={handleSubmit}>
       <input
