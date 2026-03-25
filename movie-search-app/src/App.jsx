@@ -19,7 +19,7 @@ function App() {
   const [gotoPage, setGotoPage] = useState('');
   const [recentSearches, setRecentSearches] = useState([]);
 
-  useEffect(() => {
+    useEffect(() => {
     if (!moviename.trim()) {
       setMovies([]);
       setHasSearched(false);
@@ -41,11 +41,8 @@ function App() {
 
         setMovies(data.Search || []);
         setTotalPages(Math.ceil(Number(data.totalResults || 0) / 10));
-
-        if (data.Search && data.Search.length > 0) {
-          addToRecent(moviename);
-          console.log("added to recent:", moviename);
-        }
+        console.log("moviesname: ", moviename);
+       
       } catch (err) {
         console.log(err);
         setMovies([]);
@@ -58,15 +55,22 @@ function App() {
     fetchMovies();
   }, [moviename, currentPage]);
 
+  
 
-  useEffect(() => { // lưu recent searches vào localstorage mỗi khi thay đổi
-    localStorage.setItem('recentMovieSearches', JSON.stringify(recentSearches));
-  }, [recentSearches]);
-
-
+  useEffect(() => { // lấy recent searches từ localstorage khi app load
+    const stored = JSON.parse(localStorage.getItem('recentMovieSearches'));
+    if (Array.isArray(stored)) {
+      setRecentSearches(stored);
+    }
+    else {
+      const fixed = [stored];
+      setRecentSearches(fixed);
+      localStorage.setItem('recentMovieSearches', JSON.stringify(fixed));
+    }
+  }, []);
+  
   const addToRecent = (searchTerm) => { //thêm search vào recent (giới hạn 8 cái, mới nhất lên đầu)
     if (!searchTerm.trim()) return;
-
     setRecentSearches(prev => {
       const filtered = prev.filter(item => item.toLowerCase() !== searchTerm.toLowerCase());
       const updated = [searchTerm, ...filtered].slice(0, 8);
@@ -74,6 +78,12 @@ function App() {
       return updated;
     });
   };
+
+
+
+  
+
+
 
 
   const handleRecentClick = (term) => {
@@ -150,12 +160,17 @@ function App() {
       moviename={moviename}
       input={input}
       setInput={setInput}
-      setCurrentPage={setCurrentPage}/>
+      setCurrentPage={setCurrentPage}
+      recentSearches={recentSearches}
+      addToRecent={addToRecent}
+      />
 
 
       <MovieRecent 
       recentSearches={recentSearches}
-      handleRecentClick={handleRecentClick}/>
+      handleRecentClick={handleRecentClick}
+      hasSearched={hasSearched}
+      />
 
     
       

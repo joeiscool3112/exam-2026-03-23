@@ -1,4 +1,5 @@
-function MovieRecent({ recentSearches, handleRecentClick }) {
+function MovieRecent({ recentSearches, handleRecentClick, hasSearched }) {
+    if (hasSearched) return null;
     return (
         <>
         {recentSearches.length > 0 && (
